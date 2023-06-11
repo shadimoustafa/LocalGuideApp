@@ -27,7 +27,7 @@ markdown
 Copy code
 3. Obtain your API keys for [OpenWeatherMap](https://home.openweathermap.org/users/sign_up) and [NewsAPI](https://newsapi.org/register).
 
-4. Replace the placeholders in the `app.py` file with your API keys.
+4. Replace the placeholders in the `WeatherApp.py` file with your API keys.
 
 ### Usage
 Run `WeatherApp.py` to start the application. Enter a city name in the input field and hit the search icon to display the weather, current time, and top news headlines for that city.
