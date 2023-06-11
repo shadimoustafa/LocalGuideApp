@@ -16,7 +16,7 @@ Before you start, you should have Python 3 installed on your system. You will al
 
 ### Installation
 1. Clone the repo:
-git clone [https://github.com/your_username_/Project-Name.git](https://github.com/shadimoustafa/LocalGuideApp.git)
+git clone https://github.com/shadimoustafa/LocalGuideApp.git
 
 markdown
 Copy code
