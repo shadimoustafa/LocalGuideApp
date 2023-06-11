@@ -6,13 +6,17 @@ from timezonefinder import TimezoneFinder
 from datetime import datetime
 import requests 
 import pytz
+from newsapi import NewsApiClient
+
 
 root=Tk()
-root.title("Weather App")
+root.title("The Local Guide App")
 root.geometry("900x500+300+200")
-root.resizable(False,False)
+root.resizable(True,True)
+news_api_key='2add1761eac745a59255f197de4b72ca'
 
-def getWeather():
+
+def getLocalData():
     try:
         city=textfield.get()
     
@@ -25,19 +29,23 @@ def getWeather():
         local_time=datetime.now(home)
         current_time=local_time.strftime("%I:%M %p")
         clock.config(text=current_time)
-        name.config(text="CURRENT WEATHER")
+
     
         #weather
         api="https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=7274a4b9bc8213d8775663d16fb4a6a2"
     
         json_data = requests.get(api).json()
+        country = json_data['sys']['country']
+        getcity = json_data['name']
+        name.config(text="Showing the current weather for " + getcity + "," + country )
         condition = json_data['weather'][0]['main']
         description = json_data['weather'][0]['description']
-        temp = int(json_data['main']['temp']-273.15)
+        temp = int(json_data['main']['temp']-272.15)
         pressure = json_data['main']['pressure']
         humidity = json_data['main']['humidity']
         wind = json_data['wind']['speed']
-    
+
+
         t.config(text=(temp,"°"))
         c.config(text=(condition,"|","FEELS","LIKE",temp,"°"))
     
@@ -45,9 +53,20 @@ def getWeather():
         h.config(text=humidity)
         d.config(text=description)
         p.config(text=pressure)
+
+
+        # Get news top headlines
+        newsapi = NewsApiClient(api_key=news_api_key)
+        top_headlines = newsapi.get_everything(q=getcity,sort_by='relevancy',
+                                          language='en',page_size=1,page=1)
+
+        # Extract and print the article titles
+        news.config(text=top_headlines['articles'][0]['title'])
+        print(top_headlines['articles'][0]['title'])
         
     except Exception as e:
-        messagebox.showerror("Weather App","Invalid Entry!!")
+        messagebox.showerror("Invalid Ciy Name!")
+
 
 #search box
 Search_image=PhotoImage(file="search.png")
@@ -60,7 +79,7 @@ textfield.place(x=50,y=40)
 textfield.focus()
 
 search_icon=PhotoImage(file="search_icon.png")
-myimage_icon=Button(image=search_icon,borderwidth=0,cursor="hand2",bg="#404040",command=getWeather)
+myimage_icon=Button(image=search_icon,borderwidth=0,cursor="hand2",bg="#404040",command=getLocalData)
 myimage_icon.place(x=400,y=34)
 
 #logo
@@ -71,7 +90,7 @@ logo.place(x=150,y=100)
 #Bottom box
 Frame_image=PhotoImage(file="box.png")
 frame_myimage=Label(image=Frame_image)
-frame_myimage.pack(padx=5,pady=5,side=BOTTOM)
+frame_myimage.place(x=60,y=320)
 
 #time
 name=Label(root, font=("arial",15,"bold"))
@@ -81,16 +100,19 @@ clock.place(x=30,y=130)
 
 #label
 label1=Label(root,text="WIND",font=("Helvetica",15,"bold"),fg="White",bg="#1ab5ef")
-label1.place(x=120,y=400)
+label1.place(x=120,y=350)
 
 label2=Label(root,text="HUMIDITY",font=("Helvetica",15,"bold"),fg="White",bg="#1ab5ef")
-label2.place(x=250,y=400)
+label2.place(x=250,y=350)
 
 label3=Label(root,text="DESCRIPTION",font=("Helvetica",15,"bold"),fg="White",bg="#1ab5ef")
-label3.place(x=430,y=400)
+label3.place(x=430,y=350)
 
 label4=Label(root,text="PRESSURE",font=("Helvetica",15,"bold"),fg="White",bg="#1ab5ef")
-label4.place(x=650,y=400)
+label4.place(x=650,y=350)
+
+label5=Label(root,text="NEWS",font=("Helvetica",15,"bold"),fg="White",bg="#1ab5ef")
+label5.place(x=30,y=420)
 
 t=Label(font=("arial",70,"bold"),fg="#ee666d")
 t.place(x=400,y=150)  
@@ -98,12 +120,15 @@ c=Label(font= ("arial",15,'bold'))
 c.place(x=400,y=250)   
 
 w=Label(text="...",font=("arial",20,"bold"),bg="#1ab5ef")
-w.place(x=120,y=430)
+w.place(x=120,y=380)
 h=Label(text="...",font=("arial",20,"bold"),bg="#1ab5ef")
-h.place(x=280,y=430)
+h.place(x=280,y=380)
 d=Label(text="...",font=("arial",20,"bold"),bg="#1ab5ef")
-d.place(x=450,y=430)
+d.place(x=450,y=380)
 p=Label(text="...",font=("arial",20,"bold"),bg="#1ab5ef")
-p.place(x=670,y=430)
+p.place(x=670,y=380)
+
+news=Label(root, font=("arial",15,"bold"))
+news.place(x=30,y=450) 
 
 root.mainloop()
